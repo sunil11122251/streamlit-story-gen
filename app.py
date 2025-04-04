@@ -15,6 +15,6 @@ st.title("Story Generator")
 genre = st.selectbox("Choose Genre", ["Fantasy", "Sci-Fi", "Horror"])
 prompt = st.text_input("Starting Sentence")
 if st.button("Generate Story"):
-    story = generator(f"{genre} story: {prompt}", max_length=1000)[0]['generated_text']
+    story = generator(f"{genre} story: {prompt}", max_length=200)[0]['generated_text']
     st.write(story)
     st.download_button("Download Story", story, "story.txt")
