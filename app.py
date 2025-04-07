@@ -1,10 +1,12 @@
 import streamlit as st
 from transformers import pipeline, GPT2LMHeadModel, GPT2Tokenizer
 import torch
+import os
 
+os.environ["HF_HOME"] = "C:\\Users\\Hi\\huggingface_cache"
 try:
-    tokenizer = GPT2Tokenizer.from_pretrained('distilgpt2')
-    model = GPT2LMHeadModel.from_pretrained('distilgpt2')
+    tokenizer = GPT2Tokenizer.from_pretrained('distilgpt2', local_files_only=False)
+    model = GPT2LMHeadModel.from_pretrained('distilgpt2', local_files_only=False)
     device = torch.device('cpu')
     model.to(device)
     generator = pipeline('text-generation', model=model, tokenizer=tokenizer, framework='pt', device=device)
