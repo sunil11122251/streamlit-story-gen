@@ -3,15 +3,14 @@ from transformers import pipeline, GPT2LMHeadModel, GPT2Tokenizer
 import torch
 
 try:
-    # Load tokenizer and model explicitly
     tokenizer = GPT2Tokenizer.from_pretrained('./distilgpt2')
     model = GPT2LMHeadModel.from_pretrained('./distilgpt2')
-    # Ensure model is on CPU and not meta
+    device = torch.device('cpu')
     if model.device.type == 'meta':
-        model.to_empty(device='cpu')
+        model.to_empty(device=device)
     else:
-        model.to('cpu')
-    generator = pipeline('text-generation', model=model, tokenizer=tokenizer, framework='pt')
+        model.to(device)
+    generator = pipeline('text-generation', model=model, tokenizer=tokenizer, framework='pt', device=device)
 except Exception as e:
     st.error(f"Failed to load model: {str(e)}")
     st.stop()
@@ -28,7 +27,16 @@ genre = st.selectbox("Choose Genre", ["Fantasy", "Sci-Fi", "Horror"])
 prompt = st.text_input("Starting Sentence")
 if st.button("Generate Story"):
     try:
-        story = generator(f"{genre} story: {prompt}", max_length=100)[0]['generated_text']
+        story = generator(
+            f"{genre} story: {prompt}",
+            max_length=100,
+            truncation=True,
+            do_sample=True,
+            top_k=50,
+            top_p=0.95,
+            temperature=0.7,
+            num_return_sequences=1
+        )[0]['generated_text']
         st.write(story)
         st.download_button("Download Story", story, "story.txt")
     except Exception as e:
