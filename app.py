@@ -2,7 +2,12 @@
 import streamlit as st
 from transformers import pipeline
 
-generator = pipeline('text-generation', model='distilgpt2')
+# Load the model with explicit framework (torch) to avoid Keras issues
+try:
+    generator = pipeline('text-generation', model='distilgpt2', framework='pt')
+except Exception as e:
+    st.error(f"Failed to load model: {str(e)}")
+    st.stop()
 
 st.markdown("""
     <style>
@@ -15,6 +20,9 @@ st.title("Story Generator")
 genre = st.selectbox("Choose Genre", ["Fantasy", "Sci-Fi", "Horror"])
 prompt = st.text_input("Starting Sentence")
 if st.button("Generate Story"):
-    story = generator(f"{genre} story: {prompt}", max_length=100)[0]['generated_text']
-    st.write(story)
-    st.download_button("Download Story", story, "story.txt")
+    try:
+        story = generator(f"{genre} story: {prompt}", max_length=100)[0]['generated_text']
+        st.write(story)
+        st.download_button("Download Story", story, "story.txt")
+    except Exception as e:
+        st.error(f"Error generating story: {str(e)}")
