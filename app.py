@@ -2,11 +2,17 @@ import streamlit as st
 from transformers import pipeline, GPT2LMHeadModel, GPT2Tokenizer
 import torch
 import os
+import logging
 
+logging.basicConfig(level=logging.DEBUG)
 os.environ["HF_HOME"] = "C:\\Users\\Hi\\huggingface_cache"
 try:
+    logging.debug("Loading tokenizer...")
     tokenizer = GPT2Tokenizer.from_pretrained('distilgpt2', local_files_only=False)
+    logging.debug("Tokenizer loaded")
+    logging.debug("Loading model...")
     model = GPT2LMHeadModel.from_pretrained('distilgpt2', local_files_only=False)
+    logging.debug("Model loaded")
     device = torch.device('cpu')
     model.to(device)
     generator = pipeline('text-generation', model=model, tokenizer=tokenizer, framework='pt', device=device)
