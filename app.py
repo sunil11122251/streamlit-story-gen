@@ -1,8 +1,17 @@
 import streamlit as st
-from transformers import pipeline
+from transformers import pipeline, GPT2LMHeadModel, GPT2Tokenizer
+import torch
 
 try:
-    generator = pipeline('text-generation', model='./distilgpt2', framework='pt')
+    # Load tokenizer and model explicitly
+    tokenizer = GPT2Tokenizer.from_pretrained('./distilgpt2')
+    model = GPT2LMHeadModel.from_pretrained('./distilgpt2')
+    # Ensure model is on CPU and not meta
+    if model.device.type == 'meta':
+        model.to_empty(device='cpu')
+    else:
+        model.to('cpu')
+    generator = pipeline('text-generation', model=model, tokenizer=tokenizer, framework='pt')
 except Exception as e:
     st.error(f"Failed to load model: {str(e)}")
     st.stop()
