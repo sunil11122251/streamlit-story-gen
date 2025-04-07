@@ -3,13 +3,10 @@ from transformers import pipeline, GPT2LMHeadModel, GPT2Tokenizer
 import torch
 
 try:
-    tokenizer = GPT2Tokenizer.from_pretrained('./distilgpt2')
-    model = GPT2LMHeadModel.from_pretrained('./distilgpt2')
+    tokenizer = GPT2Tokenizer.from_pretrained('distilgpt2')
+    model = GPT2LMHeadModel.from_pretrained('distilgpt2')
     device = torch.device('cpu')
-    if model.device.type == 'meta':
-        model.to_empty(device=device)
-    else:
-        model.to(device)
+    model.to(device)
     generator = pipeline('text-generation', model=model, tokenizer=tokenizer, framework='pt', device=device)
 except Exception as e:
     st.error(f"Failed to load model: {str(e)}")
