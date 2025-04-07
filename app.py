@@ -1,10 +1,12 @@
-# app.py
 import streamlit as st
 from transformers import pipeline
+import sys
 
-# Load the model with explicit framework (torch) to avoid Keras issues
+# Disable file watcher to avoid PyTorch path issue
+sys.argv.append("--server.fileWatcherType=none")
+
 try:
-    generator = pipeline('text-generation', model='distilgpt2', framework='pt')
+    generator = pipeline('text-generation', model='./distilgpt2', framework='pt')
 except Exception as e:
     st.error(f"Failed to load model: {str(e)}")
     st.stop()
