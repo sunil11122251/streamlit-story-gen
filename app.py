@@ -1,9 +1,5 @@
 import streamlit as st
 from transformers import pipeline
-import sys
-
-# Disable file watcher to avoid PyTorch path issue
-sys.argv.append("--server.fileWatcherType=none")
 
 try:
     generator = pipeline('text-generation', model='./distilgpt2', framework='pt')
